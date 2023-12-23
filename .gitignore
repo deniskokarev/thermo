@@ -1,0 +1,6 @@
+.DS_Store
+*~
+*thermo-backups*
+*.gbr
+*.gbrjob
+*.lck

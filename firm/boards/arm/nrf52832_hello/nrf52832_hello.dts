@@ -1,0 +1,138 @@
+/*
+ * Copyright (c) 2017 Shawn Nock <shawn@monadnock.ca>
+ * Copyright (c) 2017 Linaro Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+#include <nordic/nrf52832_qfaa.dtsi>
+#include "nrf52832_hello.dtsi"
+
+/ {
+	model = "Nordic nRF52 DK NRF52832";
+	compatible = "nordic,nrf52-dk-nrf52832";
+
+	chosen {
+		zephyr,console = &uart0;
+		zephyr,shell-uart = &uart0;
+		zephyr,uart-mcumgr = &uart0;
+		zephyr,bt-mon-uart = &uart0;
+		zephyr,bt-c2h-uart = &uart0;
+		zephyr,sram = &sram0;
+		zephyr,flash = &flash0;
+		zephyr,code-partition = &slot0_partition;
+	};
+
+	zephyr,user {
+		dac = <&dac0>;
+		dac-channel-id = <0>;
+		dac-resolution = <12>;
+
+		io-channels = <&adc 0>;
+	};
+
+	pwmleds: pwmleds {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		green_pwm_led: green_pwm_led {
+			pwms = <&pwm0 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+		};
+
+		red_pwm_led: red_pwm_led {
+			pwms = <&pwm0 1 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+		};
+	};
+
+
+	/* These aliases are provided for compatibility with samples */
+	aliases {
+		pledg = &green_pwm_led;
+		pledr = &red_pwm_led;
+		watchdog0 = &wdt0;
+	};
+};
+
+&adc {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	channel@0 {
+		// when battery is not connected the jitter on the channel is quite high
+		reg = <0>;
+		zephyr,gain = "ADC_GAIN_1_6"; // nordic iref = 0.6v, i.e 4095 == 3.6v
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, 40)>; // slowest supported
+		zephyr,input-positive = <NRF_SAADC_AIN0>; /* P0.02 */
+		zephyr,oversampling = <4>; // average over 16 samples
+		zephyr,resolution = <12>;
+	};
+};
+
+&gpiote {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+arduino_serial: &uart0 {
+	status = "okay";
+	compatible = "nordic,nrf-uarte";
+	current-speed = <115200>;
+	pinctrl-0 = <&uart0_default>;
+	pinctrl-1 = <&uart0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pwm0 {
+	status = "okay";
+	pinctrl-0 = <&pwm0_default>;
+	pinctrl-1 = <&pwm0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&i2c0 {
+	compatible = "nordic,nrf-twim";
+	status = "okay";
+	pinctrl-0 = <&i2c0_default>;
+	pinctrl-1 = <&i2c0_sleep>;
+	pinctrl-names = "default", "sleep";
+	dac0: mcp4725@64 {
+		// MCP4725A2T-E-CH
+		// addr = 1100 10 0
+		compatible = "microchip,mcp4725";
+		status = "okay";
+		reg = <0x64>;
+		#io-channel-cells = <1>;
+	};
+};
+
+&flash0 {
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 0xc000>;
+		};
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 0x37000>;
+		};
+		slot1_partition: partition@43000 {
+			label = "image-1";
+			reg = <0x00043000 0x37000>;
+		};
+		storage_partition: partition@7a000 {
+			label = "storage";
+			reg = <0x0007a000 0x00006000>;
+		};
+	};
+};
