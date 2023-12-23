@@ -35,7 +35,7 @@ cmake -B build .
 ```
 or
 ```
-west build -b nrf52832_hello
+west build
 ```
 flash
 ```
@@ -47,7 +47,7 @@ west flash
 picocom --omap crcrlf -c -b 115200 /dev/cu.usbmodem0010503670791
 ...
 *** Booting Zephyr OS build zephyr-v3.3.0-47-gff79476b11c9 ***
-Hello World! nrf52832_hello
+Hello World! 
 ```
 
 Exit ^A ^X
