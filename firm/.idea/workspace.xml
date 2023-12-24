@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="CMakePresetLoader"><![CDATA[{
-  "useNewFormat": true
-}]]></component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
   <component name="CMakeReloadState">
     <option name="reloaded" value="true" />
   </component>
   <component name="CMakeRunConfigurationManager">
     <generated>
-      <config projectName="thermo" targetName="subsys__net" />
       <config projectName="thermo" targetName="compiler-cpp" />
       <config projectName="thermo" targetName="runners_yaml_props_target" />
       <config projectName="thermo" targetName="linker_zephyr_prebuilt_script_target" />
@@ -17,23 +16,20 @@
       <config projectName="thermo" targetName="kobj_types_h_target" />
       <config projectName="thermo" targetName="flash" />
       <config projectName="thermo" targetName="arch__arm__core__aarch32__mpu" />
-      <config projectName="thermo" targetName="drivers__sensor" />
       <config projectName="thermo" targetName="modules__segger" />
       <config projectName="thermo" targetName="soc__arm__nordic_nrf__nrf52" />
+      <config projectName="thermo" targetName="drivers__sensor" />
       <config projectName="thermo" targetName="linker_zephyr_pre0_script" />
       <config projectName="thermo" targetName="drivers__timer" />
       <config projectName="thermo" targetName="zephyr" />
       <config projectName="thermo" targetName="ram_report" />
-      <config projectName="thermo" targetName="drivers__entropy" />
-      <config projectName="thermo" targetName="drivers__pwm" />
       <config projectName="thermo" targetName="pristine" />
-      <config projectName="thermo" targetName="drivers__sensor__si7006" />
       <config projectName="thermo" targetName="modules__hal_nordic__nrfx" />
+      <config projectName="thermo" targetName="drivers__sensor__si7006" />
       <config projectName="thermo" targetName="code_data_relocation_target" />
       <config projectName="thermo" targetName="hardenconfig" />
       <config projectName="thermo" targetName="driver_validation_h_target" />
       <config projectName="thermo" targetName="drivers__clock_control" />
-      <config projectName="thermo" targetName="subsys__bluetooth__controller" />
       <config projectName="thermo" targetName="drivers__serial" />
       <config projectName="thermo" targetName="debugserver" />
       <config projectName="thermo" targetName="drivers__gpio" />
@@ -52,26 +48,21 @@
       <config projectName="thermo" targetName="footprint" />
       <config projectName="thermo" targetName="usage" />
       <config projectName="thermo" targetName="asm" />
-      <config projectName="thermo" targetName="drivers__adc" />
       <config projectName="thermo" targetName="config-twister" />
       <config projectName="thermo" targetName="zephyr_final" />
       <config projectName="thermo" targetName="linker" />
       <config projectName="thermo" targetName="drivers__i2c" />
       <config projectName="thermo" targetName="zephyr_pre1" />
       <config projectName="thermo" targetName="zephyr_pre0" />
-      <config projectName="thermo" targetName="subsys__bluetooth__common" />
       <config projectName="thermo" targetName="zephyr_generated_headers" />
       <config projectName="thermo" targetName="arch__common" />
       <config projectName="thermo" targetName="soc__arm__common__cortex_m" />
       <config projectName="thermo" targetName="offsets" />
       <config projectName="thermo" targetName="drivers__console" />
-      <config projectName="thermo" targetName="subsys__random" />
       <config projectName="thermo" targetName="drivers__interrupt_controller" />
       <config projectName="thermo" targetName="arch__arm__core__aarch32" />
       <config projectName="thermo" targetName="syscall_list_h_target" />
-      <config projectName="thermo" targetName="drivers__dac" />
       <config projectName="thermo" targetName="lib__posix" />
-      <config projectName="thermo" targetName="subsys__bluetooth__shell" />
       <config projectName="thermo" targetName="shields" />
       <config projectName="thermo" targetName="rom_report" />
       <config projectName="thermo" targetName="bintools" />
@@ -81,7 +72,6 @@
       <config projectName="thermo" targetName="kernel" />
       <config projectName="thermo" targetName="devicetree_target" />
       <config projectName="thermo" targetName="run" />
-      <config projectName="thermo" targetName="subsys__bluetooth__host" />
     </generated>
   </component>
   <component name="CMakeSettings">
@@ -90,7 +80,12 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="699d80ac-893a-4b81-b73a-e2d948a5d9b2" name="Changes" comment="" />
+    <list default="true" id="699d80ac-893a-4b81-b73a-e2d948a5d9b2" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/boards/shields/thermo/thermo.overlay" beforeDir="false" afterPath="$PROJECT_DIR$/boards/shields/thermo/thermo.overlay" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prj.conf" beforeDir="false" afterPath="$PROJECT_DIR$/prj.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -117,17 +112,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "nodejs_package_manager_path": "npm"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;cf.advertisement.text.has.clang-format&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="CMake Application.zephyr_final">
     <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
@@ -219,27 +215,12 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="drivers__adc" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="thermo" TARGET_NAME="drivers__adc" CONFIG_NAME="Debug">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="drivers__clock_control" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="thermo" TARGET_NAME="drivers__clock_control" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="drivers__console" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="thermo" TARGET_NAME="drivers__console" CONFIG_NAME="Debug">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="drivers__dac" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="thermo" TARGET_NAME="drivers__dac" CONFIG_NAME="Debug">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="drivers__entropy" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="thermo" TARGET_NAME="drivers__entropy" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -260,11 +241,6 @@
       </method>
     </configuration>
     <configuration name="drivers__pinctrl" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="thermo" TARGET_NAME="drivers__pinctrl" CONFIG_NAME="Debug">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="drivers__pwm" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="thermo" TARGET_NAME="drivers__pwm" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -429,36 +405,6 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="subsys__bluetooth__common" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="thermo" TARGET_NAME="subsys__bluetooth__common" CONFIG_NAME="Debug">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="subsys__bluetooth__controller" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="thermo" TARGET_NAME="subsys__bluetooth__controller" CONFIG_NAME="Debug">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="subsys__bluetooth__host" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="thermo" TARGET_NAME="subsys__bluetooth__host" CONFIG_NAME="Debug">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="subsys__bluetooth__shell" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="thermo" TARGET_NAME="subsys__bluetooth__shell" CONFIG_NAME="Debug">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="subsys__net" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="thermo" TARGET_NAME="subsys__net" CONFIG_NAME="Debug">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="subsys__random" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="thermo" TARGET_NAME="subsys__random" CONFIG_NAME="Debug">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="syscall_list_h_target" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="thermo" TARGET_NAME="syscall_list_h_target" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -551,16 +497,12 @@
       <item itemvalue="CMake Application.ram_report" />
       <item itemvalue="CMake Application.rom_report" />
       <item itemvalue="CMake Application.usage" />
-      <item itemvalue="CMake Application.drivers__adc" />
       <item itemvalue="CMake Application.drivers__clock_control" />
       <item itemvalue="CMake Application.drivers__console" />
-      <item itemvalue="CMake Application.drivers__dac" />
-      <item itemvalue="CMake Application.drivers__entropy" />
       <item itemvalue="CMake Application.drivers__gpio" />
       <item itemvalue="CMake Application.drivers__i2c" />
       <item itemvalue="CMake Application.drivers__interrupt_controller" />
       <item itemvalue="CMake Application.drivers__pinctrl" />
-      <item itemvalue="CMake Application.drivers__pwm" />
       <item itemvalue="CMake Application.drivers__sensor" />
       <item itemvalue="CMake Application.drivers__sensor__nrf5" />
       <item itemvalue="CMake Application.drivers__sensor__si7006" />
@@ -573,12 +515,6 @@
       <item itemvalue="CMake Application.modules__segger" />
       <item itemvalue="CMake Application.soc__arm__common__cortex_m" />
       <item itemvalue="CMake Application.soc__arm__nordic_nrf__nrf52" />
-      <item itemvalue="CMake Application.subsys__bluetooth__common" />
-      <item itemvalue="CMake Application.subsys__bluetooth__controller" />
-      <item itemvalue="CMake Application.subsys__bluetooth__host" />
-      <item itemvalue="CMake Application.subsys__bluetooth__shell" />
-      <item itemvalue="CMake Application.subsys__net" />
-      <item itemvalue="CMake Application.subsys__random" />
     </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -590,6 +526,9 @@
       <option name="presentableId" value="Default" />
       <updated>1703373456018</updated>
       <workItem from="1703373457562" duration="74000" />
+      <workItem from="1703375165724" duration="1091000" />
+      <workItem from="1703376453185" duration="37000" />
+      <workItem from="1703376495734" duration="5695000" />
     </task>
     <servers />
   </component>

@@ -1,6 +1,12 @@
+/ {
+    zephyr,user {
+        thermo = <&thermo>;
+    };
+};
+
 &i2c0 {
         status = "okay";
-        si7021@40{
+        thermo: si7021@40{
                 compatible = "silabs,si7006";
                 reg = <0x40>;
                 label = "Si7021";
