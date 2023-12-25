@@ -2467,7 +2467,7 @@
     (property "Reference" "BT1" (at 76.2 33.655 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "BAT-HLD-001" (at 76.2 36.195 90)
+    (property "Value" "CR2032" (at 76.2 36.195 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "_MyFootprints:BAT_BAT-HLD-001" (at 71.755 35.56 0)

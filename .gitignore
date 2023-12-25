@@ -1,6 +1,7 @@
 .DS_Store
 *~
 *thermo-backups*
+fp-info-cache
 *.gbr
 *.gbrjob
 *.lck
