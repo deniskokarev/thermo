@@ -5,6 +5,7 @@ LOG_MODULE_REGISTER(main, LOG_LEVEL_INF);
 
 #include "adc.h"
 #include "thermo.h"
+#include "bt.h"
 
 void main(void) {
 	int rc;
@@ -14,6 +15,10 @@ void main(void) {
 	}
 	if (!thermo_init()) {
 		LOG_ERR("Cannot initialize temperature sensor");
+		return;
+	}
+	if (bt_start()) {
+		LOG_ERR("Cannot start BT subsystem");
 		return;
 	}
 
