@@ -81,11 +81,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="699d80ac-893a-4b81-b73a-e2d948a5d9b2" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/thermo.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/thermo.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/adc.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/adc.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/boards/shields/thermo/thermo.overlay" beforeDir="false" afterPath="$PROJECT_DIR$/boards/shields/thermo/thermo.overlay" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prj.conf" beforeDir="false" afterPath="$PROJECT_DIR$/prj.conf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -530,7 +531,7 @@
       <workItem from="1703373457562" duration="74000" />
       <workItem from="1703375165724" duration="1091000" />
       <workItem from="1703376453185" duration="37000" />
-      <workItem from="1703376495734" duration="8696000" />
+      <workItem from="1703376495734" duration="10822000" />
     </task>
     <servers />
   </component>

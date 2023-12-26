@@ -1,6 +1,7 @@
 / {
     zephyr,user {
         thermo = <&thermo>;
+        io-channels = <&adc 0>;
     };
 };
 
@@ -12,4 +13,21 @@
                 label = "Si7021";
                 status = "okay";
         };
+};
+
+&adc {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	channel@0 {
+		// when battery is not connected the jitter on the channel is quite high
+		reg = <0>;
+		zephyr,gain = "ADC_GAIN_1_6"; // nordic iref = 0.6v, i.e 4095 == 3.6v
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, 40)>; // slowest supported
+		zephyr,input-positive = <NRF_SAADC_AIN0>; /* P0.02 */
+		zephyr,oversampling = <4>; // average over 16 samples
+		zephyr,resolution = <12>;
+	};
 };
