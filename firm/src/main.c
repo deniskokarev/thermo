@@ -23,13 +23,6 @@ void main(void) {
 	}
 
 	while (true) {
-		static double val[THS_SZ];
-		if (thermo_read(val)) {
-			LOG_ERR("Failed to fetch sensor sample");
-		} else {
-			LOG_INF("T:   %.1fC", val[THS_TEMP]);
-			LOG_INF("RH:  %.1f%%", val[THS_HUM]);
-		}
 		float bat;
 		if (adc_sample(&bat, ACH_BAT_LVL)) {
 			LOG_ERR("Failed to read battery voltage");

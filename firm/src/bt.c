@@ -11,6 +11,10 @@ LOG_MODULE_REGISTER(bt, LOG_LEVEL_INF);
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/settings/settings.h>
 
+#include <zephyr/bluetooth/gatt.h>
+#include <zephyr/sys/byteorder.h>
+
+#include "thermo.h"
 
 static const struct bt_data ad[] = {
 		BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -89,3 +93,74 @@ int bt_start() {
 	LOG_INF("Advertising successfully started");
 	return 0;
 }
+
+static struct esp_ctx_s {
+	struct k_work_delayable update_work;
+	uint16_t temp_val;
+	uint16_t hum_val;
+	bool active;
+} esp_ctx = {.temp_val = 20 * 100, .hum_val = 50 * 100, .active = false};
+
+static void update_temp() {
+	static double val[THS_SZ];
+	if (thermo_read(val)) {
+		LOG_ERR("Failed to fetch sensor sample");
+	} else {
+		LOG_INF("T:   %.1fC", val[THS_TEMP]);
+		LOG_INF("RH:  %.1f%%", val[THS_HUM]);
+		esp_ctx.temp_val = val[THS_TEMP] * 100;
+		esp_ctx.hum_val = val[THS_HUM] * 100;
+	}
+}
+
+static ssize_t read_temp(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+                         void *buf, uint16_t len, uint16_t offset) {
+	update_temp();
+
+	const uint16_t *u16 = attr->user_data;
+	uint16_t value = sys_cpu_to_le16(*u16);
+	return bt_gatt_attr_read(conn, attr, buf, len, offset, &value,
+	                         sizeof(value));
+}
+
+#define UPDATE_T (K_MSEC(5 * 1000))
+
+/**
+ * Periodic job that updates LED PWM level. Started by led_flow()
+ * @param work
+ */
+static void update_handler(struct k_work *work) {
+	update_temp();
+	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
+	k_work_reschedule(dwork, UPDATE_T); // re-trigger next invocation
+}
+
+
+static void temp_ccc_cfg_changed(const struct bt_gatt_attr *attr,
+                                 uint16_t value) {
+	bool on = (value == BT_GATT_CCC_NOTIFY);
+	if (on) {
+		k_work_init_delayable(&esp_ctx.update_work, update_handler);
+	} else {
+		k_work_cancel_delayable(&esp_ctx.update_work);
+	}
+}
+
+BT_GATT_SERVICE_DEFINE(ess_svc,
+                       BT_GATT_PRIMARY_SERVICE(BT_UUID_ESS),
+
+                       BT_GATT_CHARACTERISTIC(BT_UUID_TEMPERATURE,
+                                              BT_GATT_CHRC_READ | BT_GATT_CHRC_NOTIFY,
+                                              BT_GATT_PERM_READ,
+                                              read_temp, NULL, &esp_ctx.temp_val),
+                       BT_GATT_CUD("Temp", BT_GATT_PERM_READ),
+                       BT_GATT_CCC(temp_ccc_cfg_changed,
+                                   BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
+
+                       BT_GATT_CHARACTERISTIC(BT_UUID_HUMIDITY, BT_GATT_CHRC_READ,
+                                              BT_GATT_PERM_READ,
+                                              read_temp, NULL, &esp_ctx.hum_val),
+                       BT_GATT_CUD("Humidity", BT_GATT_PERM_READ),
+                       BT_GATT_CCC(temp_ccc_cfg_changed,
+                                   BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
+);
