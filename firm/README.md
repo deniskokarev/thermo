@@ -1,4 +1,16 @@
-# Nordic Hello
+# BLE Thermometer
+
+TODO:
+- Battery level percentage
+- Settings to memorize BT addr
+
+The sensor device serving over GATT: 
+- Temperature
+- Humidity
+- Battery level
+- Device Info: name, manufacturer, serial, etc
+
+The debug via Segger RTT inerface
 
 # Zephyr
 The project doesn't include Zephyr distribution. You should be installing it yourself as per
@@ -43,11 +55,7 @@ west flash
 ```
 
 # Run
-```
-picocom --omap crcrlf -c -b 115200 /dev/cu.usbmodem0010503670791
-...
-*** Booting Zephyr OS build zephyr-v3.3.0-47-gff79476b11c9 ***
-Hello World! 
-```
 
-Exit ^A ^X
+connect via nRF Connect and explore provided GATT characteristics
+
+for debug open /Applications/SEGGER/JLink/JLinkRTTViewer.app
