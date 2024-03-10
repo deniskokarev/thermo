@@ -21,7 +21,7 @@ class ThermoViewModel : ViewModel() {
 
     private fun localTemp(tempC: Double) = when (tempUnit) {
         LocalePreferences.TemperatureUnit.CELSIUS -> tempC
-        LocalePreferences.TemperatureUnit.FAHRENHEIT -> (tempC - 32) * 5 / 9;
+        LocalePreferences.TemperatureUnit.FAHRENHEIT -> tempC * 9 / 5 + 32;
         LocalePreferences.TemperatureUnit.KELVIN -> tempC + 283;
         else -> 0
     }
@@ -36,18 +36,18 @@ class ThermoViewModel : ViewModel() {
     // Temperature in Celsius
     private var tempC = 0.0
         set(t) {
-            _temp.value = "%.2f %s".format(localTemp(t), tempUnits())
+            _temp.value = "%.2f%s".format(localTemp(t), tempUnits())
         }
 
     // relative humidity in [0 .. 1.0] range
     private var humidity = 0.0
         set(h) {
-            _humid.value = "%.2f %%".format(humidity * 100)
+            _humid.value = "%.2f%%".format(h * 100)
         }
 
     private fun update() {
         tempC = Random.nextDouble(0.0, 40.0)
-        humidity = Random.nextDouble(0.0, 100.0)
+        humidity = Random.nextDouble(0.0, 1.0)
     }
 
     val location = MutableLiveData<String>().apply {
@@ -55,7 +55,7 @@ class ThermoViewModel : ViewModel() {
     }
     val tempLabel: LiveData<String> = _temp
     val humidLabel: LiveData<String> = _humid
-    val visible = MutableLiveData<Boolean>().apply {
+    val enabledCheckbox = MutableLiveData<Boolean>().apply {
         value = false
     }
 

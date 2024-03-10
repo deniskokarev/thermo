@@ -3,16 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:divider="@android:drawable/divider_horizontal_bright"
     android:orientation="horizontal"
     tools:context=".ui.devices.ThermoFragment">
 
-    <TextView
+    <EditText
         android:id="@+id/location"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="2"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        android:ems="10"
+        android:inputType="text" />
+
+    <Space
+        android:layout_width="20dp"
+        android:layout_height="match_parent" />
 
     <TextView
         android:id="@+id/temp"
@@ -20,6 +24,10 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <Space
+        android:layout_width="20dp"
+        android:layout_height="match_parent" />
 
     <TextView
         android:id="@+id/humid"
@@ -33,11 +41,23 @@
         android:layout_height="match_parent"
         android:layout_weight="10" />
 
-    <CheckBox
-        android:id="@+id/enabled"
+    <TextView
+        android:id="@+id/humidLabel"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="2"
-        android:text="Enabled" />
+        android:text="Humidity" />
+
+    <Space
+        android:layout_width="20dp"
+        android:layout_height="match_parent" />
+
+    <CheckBox
+        android:id="@+id/enabledCheckbox"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:checked="false"
+        android:text="Display" />
 
 </LinearLayout>
