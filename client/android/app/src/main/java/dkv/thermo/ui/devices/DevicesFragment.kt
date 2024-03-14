@@ -41,9 +41,6 @@ class DevicesFragment() : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val viewModel =
-            ViewModelProvider(this).get(DevicesViewModel::class.java)
-
         _binding = FragmentDevicesBinding.inflate(inflater, container, false)
         val root: View = binding.root
         addDeviceFragments(root)
