@@ -6,13 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TableLayout
 import android.widget.TableRow
-//import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import dkv.thermo.MainModel
 import dkv.thermo.R
 import dkv.thermo.databinding.FragmentDevicesBinding
 
-class DevicesFragment : Fragment() {
+class DevicesFragment() : Fragment() {
 
     private var _binding: FragmentDevicesBinding? = null
 
@@ -20,13 +21,15 @@ class DevicesFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    private fun addDevices(root: View) {
+    private val mainModel: MainModel by activityViewModels()
+
+    private fun addDeviceFragments(root: View) {
         val tableLayout = root.findViewById<TableLayout>(R.id.devices_table)
         val fragmentTransaction = parentFragmentManager.beginTransaction()
-        repeat(10) {
+        mainModel.db.allDevices.forEach { device ->
             val tableRow = TableRow(context)
             tableRow.id = View.generateViewId()
-            val tf = ThermoFragment(it)
+            val tf = ThermoEditFragment(device)
             fragmentTransaction.add(tableRow.id, tf)
             tableLayout.addView(tableRow)
         }
@@ -43,7 +46,7 @@ class DevicesFragment : Fragment() {
 
         _binding = FragmentDevicesBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        addDevices(root)
+        addDeviceFragments(root)
         return root
     }
 

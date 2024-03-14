@@ -4,13 +4,25 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.core.text.util.LocalePreferences
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import dkv.thermo.db.Device
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
-class ThermoViewModel : ViewModel() {
+class ThermoModel(private val device: Device) : ViewModel() {
+    companion object {
+        fun create(device: Device): ViewModelProvider.Factory =
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(
+                    modelClass: Class<T>
+                ): T {
+                    return ThermoModel(device) as T
+                }
+            }
+    }
+
     private val tempUnit = LocalePreferences.getTemperatureUnit()
     private fun tempUnits() = when (tempUnit) {
         LocalePreferences.TemperatureUnit.CELSIUS -> "°C"
@@ -46,27 +58,23 @@ class ThermoViewModel : ViewModel() {
         }
 
     private fun update() {
-        tempC = Random.nextDouble(0.0, 40.0)
-        humidity = Random.nextDouble(0.0, 1.0)
+        tempC = device.tempC
+        humidity = device.humid
     }
 
     val location = MutableLiveData<String>().apply {
-        value = "Room"
-    }
+        value = device.location
+    }.apply { observeForever { updatedLocation -> device.location = updatedLocation } }
     val tempLabel: LiveData<String> = _temp
     val humidLabel: LiveData<String> = _humid
     val enabledCheckbox = MutableLiveData<Boolean>().apply {
-        value = false
-    }
+        value = device.enabled
+    }.apply { observeForever { enabled -> device.enabled = enabled } }
 
     private lateinit var updateJob: Job
-    private var deviceId: Int = 0
-        get() = deviceId
 
-    fun launch(deviceId: Int) {
-        this.deviceId = deviceId
-        location.value = "Room $deviceId"
-        val updateJob = viewModelScope.launch {
+    fun launchUpdater() {
+        updateJob = viewModelScope.launch {
             while (true) {
                 update()
                 delay(5_000)

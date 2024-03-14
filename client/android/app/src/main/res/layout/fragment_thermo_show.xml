@@ -3,16 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center_vertical"
     android:orientation="horizontal"
-    tools:context=".ui.devices.ThermoFragment">
+    tools:context=".ui.devices.ThermoEditFragment">
 
-    <EditText
+    <TextView
         android:id="@+id/location"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
         android:layout_weight="2"
-        android:ems="10"
-        android:inputType="text" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <Space
         android:layout_width="20dp"
@@ -22,8 +23,9 @@
         android:id="@+id/temp"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <Space
         android:layout_width="20dp"
@@ -33,31 +35,22 @@
         android:id="@+id/humid"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <Space
-        android:layout_width="0dp"
+        android:layout_width="20dp"
         android:layout_height="match_parent"
-        android:layout_weight="10" />
+        android:layout_weight="1" />
 
     <TextView
         android:id="@+id/humidLabel"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_weight="2"
-        android:text="Humidity" />
-
-    <Space
-        android:layout_width="20dp"
-        android:layout_height="match_parent" />
-
-    <CheckBox
-        android:id="@+id/enabledCheckbox"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="2"
-        android:checked="false"
-        android:text="Display" />
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:text="Humidity"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
 </LinearLayout>
