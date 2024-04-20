@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import dkv.thermo.databinding.FragmentThermoEditBinding
 import dkv.thermo.db.Device
+import dkv.thermo.db.ThermoModel
 
 //private const val TAG = "ThermoFragment"
 

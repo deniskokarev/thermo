@@ -1,4 +1,4 @@
-package dkv.thermo.ui.devices
+package dkv.thermo.db
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.core.text.util.LocalePreferences
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import dkv.thermo.db.Device
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
