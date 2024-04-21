@@ -11,10 +11,19 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import dkv.thermo.databinding.ActivityMainBinding
 import dkv.thermo.db.MainModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+
+    private val TAG = this::class.simpleName
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        mainModel.db.onRequestPermissionsResult(this, requestCode, permissions, grantResults)
+    }
 
     private lateinit var binding: ActivityMainBinding
 
@@ -39,6 +48,6 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        mainModel.db.startScanning(mainModel.viewModelScope)
+        mainModel.db.checkPermissionsAndStartScanning(this, mainModel.viewModelScope)
     }
 }

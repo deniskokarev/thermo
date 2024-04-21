@@ -8,7 +8,6 @@ import android.widget.TableLayout
 import android.widget.TableRow
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import dkv.thermo.db.MainModel
 import dkv.thermo.R
 import dkv.thermo.databinding.FragmentDevicesBinding
