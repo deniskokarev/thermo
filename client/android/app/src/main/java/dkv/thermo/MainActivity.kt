@@ -53,7 +53,5 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        mainModel.db.checkPermissionsAndStartScanning(this, mainModel.viewModelScope)
     }
 }

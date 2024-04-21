@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TableLayout
 import android.widget.TableRow
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.viewModelScope
 import dkv.thermo.db.MainModel
 import dkv.thermo.R
 import dkv.thermo.databinding.FragmentDevicesBinding
@@ -20,6 +22,7 @@ class DevicesFragment() : Fragment() {
     private val mainModel: MainModel by activityViewModels()
 
     private fun reconstructDeviceFragments(root: View, devicesMap: Map<String, Device>) {
+        val progressBar = root.findViewById<ProgressBar>(R.id.devices_progress_bar)
         val tableLayout = root.findViewById<TableLayout>(R.id.devices_table)
         val fragmentTransaction = parentFragmentManager.beginTransaction()
         tableLayout.removeAllViews()
@@ -31,6 +34,8 @@ class DevicesFragment() : Fragment() {
             tableLayout.addView(tableRow)
         }
         fragmentTransaction.commit()
+        progressBar.visibility = View.GONE
+        tableLayout.visibility = View.VISIBLE
     }
 
     private fun refreshDevicesView(devicesMap: Map<String, Device>) {
@@ -57,5 +62,22 @@ class DevicesFragment() : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onStart() {
+        super.onStart()
+        activity?.let {
+            val root = _binding?.root
+            if (root != null) {
+                val progressBar = root.findViewById<ProgressBar>(R.id.devices_progress_bar)
+                val tableLayout = root.findViewById<TableLayout>(R.id.devices_table)
+                progressBar.visibility = View.VISIBLE
+                tableLayout.visibility = View.GONE
+                mainModel.db.checkPermissionsAndStartScanning(
+                    it,
+                    mainModel.viewModelScope
+                )
+            }
+        }
     }
 }
