@@ -18,7 +18,8 @@ LOG_MODULE_REGISTER(bt, LOG_LEVEL_INF);
 
 static const struct bt_data ad[] = {
 		BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-		BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_DIS_VAL)),
+		BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_DIS_VAL),
+		              BT_UUID_16_ENCODE(BT_UUID_ESS_VAL)),
 };
 
 static void connected(struct bt_conn *conn, uint8_t err) {
