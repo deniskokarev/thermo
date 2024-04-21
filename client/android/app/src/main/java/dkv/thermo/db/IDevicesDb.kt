@@ -1,6 +1,7 @@
 package dkv.thermo.db
 
 import android.app.Activity
+import android.content.Intent
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.CoroutineScope
 
@@ -27,5 +28,16 @@ interface IDevicesDb {
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray,
+    )
+
+    /**
+     * redirect Activity's onActivityResult() here to conclude the
+     * BT adapter activation if it was required
+     */
+    fun onActivityResult(
+        activity: Activity,
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
     )
 }

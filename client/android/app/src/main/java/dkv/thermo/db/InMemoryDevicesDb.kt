@@ -1,6 +1,7 @@
 package dkv.thermo.db
 
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
@@ -25,7 +26,7 @@ open class InMemoryDevicesDb : IDevicesDb {
 
     protected open val permissions: Array<String> = arrayOf()
 
-    protected open suspend fun scan() {
+    protected open suspend fun scan(activity: Activity) {
         repeat(10) {
             inMemoryDevices[it.toString()] =
                 Device(key = it.toString(), location = "Room", enabled = false)
@@ -51,7 +52,10 @@ open class InMemoryDevicesDb : IDevicesDb {
         }
     }
 
+    // to be fulfilled by onRequestPermissionsResult()
     private var permissionsContinuation: Continuation<Boolean>? = null
+    private val REQUEST_PERMISSIONS = 1
+
     override fun onRequestPermissionsResult(
         activity: Activity,
         requestCode: Int,
@@ -59,17 +63,19 @@ open class InMemoryDevicesDb : IDevicesDb {
         grantResults: IntArray,
     ) {
         val cont = permissionsContinuation
-        if (requestCode == REQUEST_BT_PERMISSIONS && cont != null) {
-            if (validatePermissions(activity)) {
-                cont.resume(true)
-            } else {
-                cont.resume(false)
-            }
+        if (cont != null && requestCode == REQUEST_PERMISSIONS) {
+            cont.resume(validatePermissions(activity))
             permissionsContinuation = null
         }
     }
 
-    private val REQUEST_BT_PERMISSIONS = 1
+    override fun onActivityResult(
+        activity: Activity,
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
+    ) = Unit
+
     private fun validatePermissions(activity: Activity) = permissions.all {
         ActivityCompat.checkSelfPermission(
             activity,
@@ -77,27 +83,34 @@ open class InMemoryDevicesDb : IDevicesDb {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private suspend fun waitForPermissions(): Boolean =
-        suspendCoroutine { cont -> permissionsContinuation = cont }
-
-    private suspend fun checkAndScan(activity: Activity) {
-        if (!validatePermissions(activity)) {
-            Log.d(TAG, "Asking for permissions...")
-            ActivityCompat.requestPermissions(
-                activity,
-                permissions,
-                REQUEST_BT_PERMISSIONS
-            )
-            if (!waitForPermissions()) {
-                Log.e(TAG, "User didn't grant permissions")
-                return
+    /**
+     * asking user for permissions[], which is fulfilled by onRequestPermissionsResult() callback
+     */
+    private suspend fun waitForPermissions(activity: Activity): Boolean =
+        suspendCoroutine { cont ->
+            if (!validatePermissions(activity)) {
+                permissionsContinuation = cont
+                Log.d(TAG, "Asking for permissions...")
+                ActivityCompat.requestPermissions(
+                    activity,
+                    permissions,
+                    REQUEST_PERMISSIONS
+                )
+            } else {
+                cont.resume(true)
             }
         }
-        Log.d(TAG, "Permissions are good, scanning for devices...")
-        scan()
-        Log.d(TAG, "Scanning complete")
-        withContext(Dispatchers.Main) {
-            liveDevices.value = inMemoryDevices
+
+    private suspend fun checkAndScan(activity: Activity) {
+        if (waitForPermissions(activity)) {
+            Log.d(TAG, "Permissions are good, scanning for devices...")
+            scan(activity)
+            Log.d(TAG, "Scanning complete")
+            withContext(Dispatchers.Main) {
+                liveDevices.value = inMemoryDevices
+            }
+        } else {
+            Log.e(TAG, "Insufficient permissions for scanning")
         }
     }
 }

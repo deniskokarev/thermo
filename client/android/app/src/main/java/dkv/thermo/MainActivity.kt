@@ -1,5 +1,6 @@
 package dkv.thermo
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -23,6 +24,11 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         mainModel.db.onRequestPermissionsResult(this, requestCode, permissions, grantResults)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        mainModel.db.onActivityResult(this, requestCode, resultCode, data)
     }
 
     private lateinit var binding: ActivityMainBinding
