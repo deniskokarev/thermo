@@ -17,6 +17,9 @@ To enable set CONFIG_SHELL=y in prj.conf
 
 
 # Zephyr
+
+The firmware is Zephyr 3.7-compatible
+
 The project doesn't include Zephyr distribution. You should be installing it yourself as per
 [Getting Started Guide](https://docs.zephyrproject.org/latest/develop/getting_started/index.html)
 It is recommended to use default location and python `venv` method.
