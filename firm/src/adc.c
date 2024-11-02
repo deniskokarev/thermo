@@ -63,7 +63,7 @@ int adc_init() {
 
 // nordic iref = 0.6v, and with x6 scale factor 4095 == 3.6v
 static float adc2v(float adc) {
-	return adc * 3.6 / 4096;
+	return adc * 3.6f / 4096;
 }
 
 /**

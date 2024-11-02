@@ -1,0 +1,5 @@
+board:
+  name: nrf52832_therm
+  vendor: nordic
+  socs:
+    - name: nrf52832

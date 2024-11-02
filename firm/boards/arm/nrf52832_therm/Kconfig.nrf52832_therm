@@ -5,4 +5,4 @@
 
 config BOARD_NRF52832_THERM
 	bool "NRF52832 Thermometer Board"
-	depends on SOC_NRF52832_QFAA
+	select SOC_NRF52832_QFAA

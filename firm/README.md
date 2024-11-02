@@ -1,5 +1,7 @@
 # BLE Thermometer
 
+Zephyr 3.7-compatible
+
 TODO:
 - Battery level percentage
 - Settings to memorize BT addr
@@ -10,7 +12,9 @@ The sensor device serving over GATT:
 - Battery level
 - Device Info: name, manufacturer, serial, etc
 
-The debug via Segger RTT inerface
+The debug console via Segger RTT interface is disabled by default for power-saving.
+To enable set CONFIG_SHELL=y in prj.conf
+
 
 # Zephyr
 The project doesn't include Zephyr distribution. You should be installing it yourself as per
@@ -35,7 +39,7 @@ Rebuild using `b`, flash using `f`
 Likewise `west build` and `west flash` will work as well
 
 
-if needed remove protection from nRF chip
+if needed to remove protection from nRF chip
 ```
 nrfjprog --recover
 nrfjprog --eraseall
@@ -59,3 +63,11 @@ west flash
 connect via nRF Connect and explore provided GATT characteristics
 
 for debug open /Applications/SEGGER/JLink/JLinkRTTViewer.app
+
+or open an RTT logger (make sure the CONFIG_LOG=y in prj.conf):
+
+```
+/Applications/SEGGER/JLink/JLinkRTTLogger -Device NRF52832_XXAA -If SWD -Speed 4000 -RTTChannel 0 /tmp/nrf.log
+
+tail -f /tmp/nrf.log
+```

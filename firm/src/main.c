@@ -7,19 +7,19 @@ LOG_MODULE_REGISTER(main, LOG_LEVEL_INF);
 #include "thermo.h"
 #include "bt.h"
 
-void main(void) {
+int main(void) {
 	int rc;
 	if ((rc = adc_init())) {
 		LOG_ERR("Cannot initialize ADC, error: %d", rc);
-		return;
+		return -1;
 	}
 	if (!thermo_init()) {
 		LOG_ERR("Cannot initialize temperature sensor");
-		return;
+		return -2;
 	}
 	if (bt_start()) {
 		LOG_ERR("Cannot start BT subsystem");
-		return;
+		return -3;
 	}
 
 	while (true) {
@@ -27,8 +27,9 @@ void main(void) {
 		if (adc_sample(&bat, ACH_BAT_LVL)) {
 			LOG_ERR("Failed to read battery voltage");
 		} else {
-			LOG_INF("Bat: %.2fV", bat);
+			LOG_INF("Bat: %.2fV", (double)bat);
 		}
 		k_sleep(K_MSEC(5000));
 	}
+	return 0;
 }
