@@ -3,6 +3,7 @@ package dkv.thermo.db
 import android.Manifest
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanFilter
@@ -64,14 +65,18 @@ class BLEDevicesDb : InMemoryDevicesDb() {
             }
         }
 
-    private val scanCallback = object : ScanCallback() {
+    private inner class ThermoScanCallback(private val adapter: BluetoothAdapter) : ScanCallback() {
         @RequiresPermission(allOf = [Manifest.permission.BLUETOOTH_CONNECT])
         private fun handleOne(result: ScanResult) {
-            val name = result.device?.name ?: "NoName"
-            val key = result.device?.address.toString()
-            Log.d(TAG, "name=$name, addr=$key")
-            inMemoryDevices[key] =
-                Device(key = "${name}_${key}", location = "Room", enabled = false)
+            val device = adapter.getRemoteDevice(result.device.address)
+            if (device.type == BluetoothDevice.DEVICE_TYPE_UNKNOWN) {
+                // fresh result
+                val name = result.device.name ?: "NoName"
+                val key = result.device.address.toString()
+                Log.d(TAG, "name=$name, addr=$key")
+                inMemoryDevices[key] =
+                    Device(key = "${name}_${key}", location = "Room", enabled = false)
+            }
         }
 
         @RequiresPermission(allOf = [Manifest.permission.BLUETOOTH_CONNECT])
@@ -82,13 +87,6 @@ class BLEDevicesDb : InMemoryDevicesDb() {
             }
         }
 
-        @RequiresPermission(allOf = [Manifest.permission.BLUETOOTH_CONNECT])
-        override fun onBatchScanResults(results: MutableList<ScanResult>?) {
-            super.onBatchScanResults(results)
-            results?.forEach {
-                handleOne(it)
-            }
-        }
     }
 
     private val environmentalSensingUUID =
@@ -118,6 +116,7 @@ class BLEDevicesDb : InMemoryDevicesDb() {
                     .setNumOfMatches(ScanSettings.MATCH_NUM_ONE_ADVERTISEMENT)
                     .setReportDelay(0L)
                     .build()
+                val scanCallback = ThermoScanCallback(adapter)
                 bleScanner.startScan(scanFilters, scanSettings, scanCallback)
                 delay(5000L)
                 bleScanner.stopScan(scanCallback)

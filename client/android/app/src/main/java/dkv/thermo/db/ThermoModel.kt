@@ -56,9 +56,9 @@ class ThermoModel(private val device: Device) : ViewModel() {
             _humid.value = "%.2f%%".format(h * 100)
         }
 
-    private fun update() {
-        tempC = device.tempC
-        humidity = device.humid
+    private suspend fun update() {
+        tempC = device.getTempC()
+        humidity = device.getHumidity()
     }
 
     val location = MutableLiveData<String>().apply {
