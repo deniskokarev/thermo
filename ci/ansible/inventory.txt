@@ -1,0 +1,5 @@
+[build_worker]
+worker_vbox
+
+[build_worker:vars]
+ansible_ssh_common_args='-F ssh_config'

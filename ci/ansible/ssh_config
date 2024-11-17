@@ -1,0 +1,4 @@
+Host worker_vbox
+	User		admin
+	Hostname	localhost
+	Port		2222

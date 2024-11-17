@@ -1,0 +1,61 @@
+- name: sudo step
+  become: true
+  block:
+
+    - name: make zephyr user
+      user:
+        name: "{{ zephyr_user }}"
+        state: present
+        createhome: yes
+        umask: 022
+    - name: install zephyr dependencies
+      package:
+        name: "{{ item }}"
+      loop:
+        - git
+        - cmake
+        - dtc
+        - wget
+
+- name: zephyr user step
+  become: true
+  become_user: "{{ zephyr_user }}"
+  block:
+
+    - name: Zephyr readable  home dir
+      file:
+        path: "/home/{{ zephyr_user }}"
+        state: directory
+        mode: 0755
+
+    - name: Zephyr project dir
+      file:
+        path: "/home/{{ zephyr_user }}/zephyrproject/zephyr"
+        state: directory
+
+    - name: Zephyr github clone
+      git:
+        repo: https://github.com/zephyrproject-rtos/zephyr.git
+        dest: "/home/{{ zephyr_user }}/zephyrproject/zephyr"
+        clone: yes
+        update: yes
+        version: "v{{ zephyr_version }}-branch"
+        single_branch: true
+      notify: west_update
+
+    - name: Zephyr venv and python modules
+      pip:
+        virtualenv: "/home/{{ zephyr_user }}/zephyrproject/.venv"
+        virtualenv_command: "python3 -m venv"
+        requirements: "/home/{{ zephyr_user }}/zephyrproject/zephyr/scripts/requirements.txt"
+      notify: west_update
+
+    - name: Zephyr download minimal SDK
+      get_url:
+        url: "{{ zephyr_sdk_url }}"
+        dest: "/home/{{ zephyr_user }}/{{ zephyr_sdk_file }}"
+        checksum: "md5:{{ zephyr_sdk_md5}}"
+      notify: zephyr_sdk_update
+
+- name: Zephyr run handlers
+  meta: flush_handlers

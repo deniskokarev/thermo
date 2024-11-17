@@ -1,0 +1,5 @@
+#!/bin/bash
+# run it once to register Zephyr SDK with your CMake
+set -o errexit
+cd /home/{{ zephyr_user }}/{{ zephyr_sdk_unpack_files.files[0] }}
+./setup.sh -c $@

@@ -1,0 +1,12 @@
+#
+# build worker VMs setup and then run builds
+#
+- hosts: build_worker
+  roles:
+  - zephyr
+  vars:
+    - zephyr_user: zephyr
+    - zephyr_version: 3.7
+    - zephyr_sdk_url: https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.17.0/zephyr-sdk-0.17.0_linux-x86_64_minimal.tar.xz
+    - zephyr_sdk_md5: adcfce8bb0450a577cc00c10095c5730
+    - zephyr_sdk_file: "{{ zephyr_sdk_url | regex_replace('^.*/([^/]*)$', '\\1')}}"
