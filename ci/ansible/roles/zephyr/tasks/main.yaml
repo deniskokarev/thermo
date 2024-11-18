@@ -2,13 +2,13 @@
   become: true
   block:
 
-    - name: make zephyr user
+    - name: make user
       user:
         name: "{{ zephyr_user }}"
         state: present
         createhome: yes
         umask: 022
-    - name: install zephyr dependencies
+    - name: install dependencies
       package:
         name: "{{ item }}"
       loop:
@@ -22,18 +22,18 @@
   become_user: "{{ zephyr_user }}"
   block:
 
-    - name: Zephyr readable  home dir
+    - name: make home dir readable
       file:
         path: "/home/{{ zephyr_user }}"
         state: directory
         mode: 0755
 
-    - name: Zephyr project dir
+    - name: make project dir
       file:
         path: "/home/{{ zephyr_user }}/zephyrproject/zephyr"
         state: directory
 
-    - name: Zephyr github clone
+    - name: github clone
       git:
         repo: https://github.com/zephyrproject-rtos/zephyr.git
         dest: "/home/{{ zephyr_user }}/zephyrproject/zephyr"
@@ -41,21 +41,92 @@
         update: yes
         version: "v{{ zephyr_version }}-branch"
         single_branch: true
-      notify: west_update
+      register: zephyr_git_update
 
-    - name: Zephyr venv and python modules
+    - name: flag if west update required
+      file:
+        path: "/home/{{ zephyr_user }}/zephyrproject/zephyr_west_update_done"
+        state: absent
+      when: zephyr_git_update is changed
+
+    - name: venv and python modules
       pip:
         virtualenv: "/home/{{ zephyr_user }}/zephyrproject/.venv"
         virtualenv_command: "python3 -m venv"
         requirements: "/home/{{ zephyr_user }}/zephyrproject/zephyr/scripts/requirements.txt"
-      notify: west_update
 
-    - name: Zephyr download minimal SDK
+    - name: venv shortcut
+      file:
+        src: "/home/{{ zephyr_user }}/zephyrproject/.venv/bin/activate"
+        dest: "/home/{{ zephyr_user }}/zephyr_venv_activate"
+        state: link
+
+    - name: west init
+      shell: |
+        set -o errexit
+        source ~/zephyr_venv_activate
+        west init -l ~/zephyrproject/zephyr/
+      args:
+        executable: /bin/bash
+        creates: "/home/{{ zephyr_user }}/zephyrproject/.west"
+
+    - name: west update
+      shell: |
+        set -o errexit
+        source ~/zephyr_venv_activate
+        cd ~/zephyrproject
+        west update
+        west zephyr-export
+        touch /home/{{ zephyr_user }}/zephyrproject/zephyr_west_update_done
+      args:
+        executable: /bin/bash
+        creates: "/home/{{ zephyr_user }}/zephyrproject/zephyr_west_update_done"
+
+    - name: download minimal SDK
       get_url:
         url: "{{ zephyr_sdk_url }}"
         dest: "/home/{{ zephyr_user }}/{{ zephyr_sdk_file }}"
         checksum: "md5:{{ zephyr_sdk_md5}}"
-      notify: zephyr_sdk_update
+      register: zephyr_sdk_update
 
-- name: Zephyr run handlers
-  meta: flush_handlers
+    - name: flag if SDK installation required
+      file:
+        path: "/home/{{ zephyr_user }}/zephyrproject/zephyr_sdk_done"
+        state: absent
+      when: zephyr_sdk_update is changed
+
+    - name: check SDK installation flag
+      stat:
+        path: "/home/{{ zephyr_user }}/zephyrproject/zephyr_sdk_done"
+      register: zephyr_sdk_update_flag
+
+    - name: install SDK
+      block:
+
+      - name: unpack minimal SDK
+        unarchive:
+          remote_src: yes
+          list_files: yes
+          src: "/home/{{ zephyr_user }}/{{ zephyr_sdk_file }}"
+          dest: "/home/{{ zephyr_user }}"
+        register: zephyr_sdk_unpack_files
+
+      - name: SDK registration helper for other users
+        template:
+          src: zephyr_sdk_setup.sh.j2
+          dest: /home/{{ zephyr_user }}/zephyr_sdk_setup.sh
+          mode: '0755'
+
+      - name: download and setup SDK
+        command:
+          argv:
+            - /home/{{ zephyr_user }}/zephyr_sdk_setup.sh
+            - -t arm-zephyr-eabi
+            - -t x86_64-zephyr-elf
+
+      - name: mark SDK installation done
+        file:
+          path: "/home/{{ zephyr_user }}/zephyrproject/zephyr_sdk_done"
+          state: touch
+
+      when: zephyr_sdk_update is changed or not zephyr_sdk_update_flag.stat.exists
