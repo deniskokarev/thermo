@@ -1,4 +1,6 @@
-Host worker_vbox
+Host worker1
 	User		admin
 	Hostname	localhost
 	Port		2222
+	ServerAliveInterval	180
+	ServerAliveCountMax	2

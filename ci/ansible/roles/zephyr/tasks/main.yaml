@@ -8,6 +8,12 @@
         state: present
         createhome: yes
         umask: 022
+
+    - name: enable crb repository for ninja-build
+      community.general.dnf_config_manager:
+        name: crb
+        state: enabled
+
     - name: install dependencies
       package:
         name: "{{ item }}"
@@ -16,6 +22,11 @@
         - cmake
         - dtc
         - wget
+        - python3.12
+        - python3.12-pip
+        - ninja-build
+        - epel-release
+        - ccache
 
 - name: zephyr user step
   become: true
@@ -49,22 +60,22 @@
         state: absent
       when: zephyr_git_update is changed
 
-    - name: venv and python modules
+    - name: python modules
       pip:
         virtualenv: "/home/{{ zephyr_user }}/zephyrproject/.venv"
-        virtualenv_command: "python3 -m venv"
+        virtualenv_command: python3.12 -m venv
         requirements: "/home/{{ zephyr_user }}/zephyrproject/zephyr/scripts/requirements.txt"
 
     - name: venv shortcut
-      file:
-        src: "/home/{{ zephyr_user }}/zephyrproject/.venv/bin/activate"
-        dest: "/home/{{ zephyr_user }}/zephyr_venv_activate"
-        state: link
+      template:
+        src: zephyr_env.sh.j2
+        dest: /home/{{ zephyr_user }}/zephyr_env.sh
+        mode: '0644'
 
     - name: west init
       shell: |
         set -o errexit
-        source ~/zephyr_venv_activate
+        source ~/zephyr_env.sh
         west init -l ~/zephyrproject/zephyr/
       args:
         executable: /bin/bash
@@ -73,7 +84,7 @@
     - name: west update
       shell: |
         set -o errexit
-        source ~/zephyr_venv_activate
+        source ~/zephyr_env.sh
         cd ~/zephyrproject
         west update
         west zephyr-export

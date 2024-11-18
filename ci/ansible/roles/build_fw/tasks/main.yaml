@@ -1,0 +1,47 @@
+- name: sudo step
+  become: true
+  block:
+
+    - name: make user
+      user:
+        name: "{{ build_user }}"
+        state: present
+        createhome: yes
+        umask: 022
+
+- name: build user step
+  become: true
+  become_user: "{{ build_user }}"
+  block:
+
+    - name: make home dir readable
+      file:
+        path: "/home/{{ build_user }}"
+        state: directory
+        mode: 0755
+
+    - name: register zephyr SDK
+      command:
+        cmd: /home/{{ zephyr_user }}/zephyr_sdk_setup.sh
+      args:
+        creates: "/home/{{ build_user }}/.cmake/packages/Zephyr-sdk"
+
+    - name: github clone
+      git:
+        repo: "{{ build_project_git }}"
+        dest: "/home/{{ build_user }}/{{ build_project_dir }}"
+        clone: yes
+        update: yes
+        version: "main"
+        single_branch: true
+      register: build_git_update
+        
+    - name: create_build_dir
+      shell: |
+        set -o errexit
+        source /home/{{ zephyr_user }}/zephyr_env.sh
+        cd /home/{{ build_user }}/{{ build_project_fw_dir }}
+        # this is stupid, but USER_CACHE_DIR is required for all users except zephyr
+        west build --cmake-only -- -DUSER_CACHE_DIR=$HOME
+      args:
+        creates: "/home/{{ build_user }}/{{ build_project_fw_dir }}/build"

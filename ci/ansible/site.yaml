@@ -4,9 +4,15 @@
 - hosts: build_worker
   roles:
   - zephyr
+  - build_fw
   vars:
     zephyr_user: zephyr
     zephyr_version: 3.7
-    zephyr_sdk_url: https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.17.0/zephyr-sdk-0.17.0_linux-x86_64_minimal.tar.xz
-    zephyr_sdk_md5: adcfce8bb0450a577cc00c10095c5730
+    # 3.7 works with SDK 0.16
+    zephyr_sdk_url: https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.9/zephyr-sdk-0.16.9_linux-x86_64_minimal.tar.xz
+    zephyr_sdk_md5: 252cda1500129621d22f724cc58a3222
     zephyr_sdk_file: "{{ zephyr_sdk_url | regex_replace('^.*/([^/]*)$', '\\1')}}"
+    build_user: build
+    build_project_git: https://github.com/deniskokarev/thermo.git
+    build_project_dir: thermo
+    build_project_fw_dir: "{{ build_project_dir }}/firm"
