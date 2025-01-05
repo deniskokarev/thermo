@@ -1,0 +1,76 @@
+- name: sudo step
+  become: true
+  block:
+
+    - name: make user
+      user:
+        name: "{{ android_user }}"
+        state: present
+        createhome: yes
+        umask: 022
+
+    - name: install dependencies
+      package:
+        name: "{{ item }}"
+      loop:
+        - epel-release
+        - expect
+        - libstdc++
+        - mesa-libGL-devel
+        - ncurses-libs
+        - zlib
+        - unzip
+        - java-21-openjdk-devel
+        - cmake
+
+
+- name: zephyr user step
+  become: true
+  become_user: "{{ android_user }}"
+  block:
+
+    - name: make home dir readable
+      file:
+        path: "/home/{{ android_user }}"
+        state: directory
+        mode: 0755
+
+    - name: make download and sdk dirs
+      file:
+        path: "/home/{{ android_user }}"
+        state: directory
+      loop:
+        - download
+        - sdk
+        - sdk/cmdline-tools
+        - sdk/cmdline-tools/latest
+        
+    - name: download SDK
+      get_url:
+        url: "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
+        dest: "/home/{{ android_user }}/download/commandlinetools.zip"
+      register: android_sdk_update
+
+    - name: unpack SDK
+      unarchive:
+        remote_src: yes
+        list_files: yes
+        src: "/home/{{ android_user }}/download/commandlinetools.zip"
+        dest: "/home/{{ android_user }}/sdk"
+
+    - name: SDK latest symlink
+      file:
+        src: "/home/{{ android_user }}/sdk/cmdline-tools/{{ item }}"
+        dest: "/home/{{ android_user }}/sdk/cmdline-tools/latest/{{ item }}"
+        state: link
+      loop:
+        - bin
+        - lib
+        - source.properties
+
+    - name: install script
+      template:
+        src: install_android_sdk.expect.j2
+        dest: /home/{{ android_user }}/install_android_sdk.expect
+        mode: '0755'
+         

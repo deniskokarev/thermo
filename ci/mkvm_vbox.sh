@@ -3,14 +3,13 @@
 # Make a "worker" VM using VirtualBox to executed CI locally
 #
 # Download Cloud CentOS 9 image and provision "admin" user
-# authenticated using current ~/.ssh/id_rsa.pub or use a given password
+# authenticated using current ~/.ssh/id_rsa.pub
 #
 # See usage()
 #
 set -o errexit
 
 ADMIN="admin"
-PASSWORD="passw0rd"
 KEY_FILE=~/.ssh/id_rsa.pub
 
 BASEFOLDER="/Volumes/B2/VirtualBox"
@@ -104,7 +103,6 @@ users:
   groups: users
   primary_group: adm
   lock_passwd: false
-  hashed_passwd: $(openssl passwd -6 "${PASSWORD}")
   ssh_authorized_keys:
   - $(cat $KEY_FILE)
 runcmd:

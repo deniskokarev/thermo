@@ -1,0 +1,8 @@
+#!/usr/bin/expect
+
+set timeout -1;
+spawn /home/{{ android_user }}/sdk/cmdline-tools/latest/bin/sdkmanager --install {{ android_sdk_tools_to_install | map("to_json") | join(" ") }};
+expect {
+    "Accept? (y/N)" { exp_send "y\r" ; exp_continue }
+    eof
+}

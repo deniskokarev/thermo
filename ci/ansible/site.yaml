@@ -5,6 +5,7 @@
   roles:
   - zephyr
   - build_fw
+  - android_sdk
   vars:
     zephyr_user: zephyr
     zephyr_version: 3.7
@@ -16,3 +17,9 @@
     build_project_git: https://github.com/deniskokarev/thermo.git
     build_project_dir: thermo
     build_project_fw_dir: "{{ build_project_dir }}/firm"
+    # android
+    android_user: android
+    android_sdk_tools_to_install:
+      - platform-tools
+      - build-tools;35.0.0
+      - platforms;android-35
