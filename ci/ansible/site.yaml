@@ -6,6 +6,7 @@
   - zephyr
   - build_fw
   - android_sdk
+  - build_client
   vars:
     zephyr_user: zephyr
     zephyr_version: 3.7
@@ -21,5 +22,5 @@
     android_user: android
     android_sdk_tools_to_install:
       - platform-tools
-      - build-tools;35.0.0
-      - platforms;android-35
+      - build-tools;34.0.0
+      - platforms;android-34

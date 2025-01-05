@@ -1,0 +1,49 @@
+- name: sudo step
+  become: true
+  block:
+
+    - name: install dependencies
+      package:
+        name: "{{ item }}"
+      loop:
+        - git
+
+    - name: make user
+      user:
+        name: "{{ build_user }}"
+        state: present
+        createhome: yes
+        umask: 022
+
+- name: build user step
+  become: true
+  become_user: "{{ build_user }}"
+  block:
+
+    - name: make home dir readable
+      file:
+        path: "/home/{{ build_user }}"
+        state: directory
+        mode: 0755
+
+    - name: github clone
+      git:
+        repo: "{{ build_project_git }}"
+        dest: "/home/{{ build_user }}/{{ build_project_dir }}"
+        clone: yes
+        update: yes
+        version: "main"
+        single_branch: true
+  
+    - name: local.properties with sdk path
+      template:
+        src: local.properties.j2
+        dest: "/home/{{ build_user }}/{{ build_project_dir }}/client/android/local.properties"
+        mode: '0644'
+
+    - name: build apk
+      command:
+        chdir: "/home/{{ build_user }}/{{ build_project_dir }}/client/android"
+        argv:
+          - ./gradlew
+          - assembleDebug
