@@ -36,7 +36,7 @@
         single_branch: true
       register: build_git_update
         
-    - name: create_build_dir
+    - name: create build dir
       shell: |
         set -o errexit
         source /home/{{ zephyr_user }}/zephyr_env.sh
@@ -45,3 +45,10 @@
         west build --cmake-only -- -DUSER_CACHE_DIR=$HOME
       args:
         creates: "/home/{{ build_user }}/{{ build_project_fw_dir }}/build"
+
+    - name: build
+      shell: |
+        set -o errexit
+        source /home/{{ zephyr_user }}/zephyr_env.sh
+        cd /home/{{ build_user }}/{{ build_project_fw_dir }}
+        west build
