@@ -129,9 +129,10 @@ EOF
 	
 	# hdd image + cloud-init.iso
 	VBoxManage storagectl "$VMNAME" --name "SATA Controller" --add sata --controller IntelAhci
-	VBoxManage clonehd disk "$IMG" "$VMDIR/vmdisk.vmdk" --format VMDK
+	VBoxManage clonehd disk "$IMG" "$VMDIR/vmdisk.vdi" --format VDI
+	VBoxManage modifymedium "$VMDIR/vmdisk.vdi" --resize $((20*1024))
 
-	VBoxManage storageattach "$VMNAME" --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium "$VMDIR/vmdisk.vmdk"
+	VBoxManage storageattach "$VMNAME" --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium "$VMDIR/vmdisk.vdi"
 	VBoxManage storageattach "$VMNAME" --storagectl "SATA Controller" --port 1 --device 0 --type dvddrive --medium "$VMDIR/cloud-config.iso"
 
 	#VBoxManage startvm "$VMNAME" --type headless
