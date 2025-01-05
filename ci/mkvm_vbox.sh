@@ -105,8 +105,6 @@ users:
   lock_passwd: false
   ssh_authorized_keys:
   - $(cat $KEY_FILE)
-runcmd:
-- systemctl enable --now cockpit.socket
 power_state:
   mode: poweroff
 EOF
@@ -124,9 +122,6 @@ EOF
 	VBoxManage modifyvm "$VMNAME" --macaddress1 "$(echo $mac | sed -e 's|:||g')"   # remove :
 	VBoxManage modifyvm "$VMNAME" --natpf1 SSH2VM,tcp,127.0.0.1,2222,10.0.2.15,22 
 
-	# NAT through host, but redirect cockpit:9090 -> VM:9090
-	VBoxManage modifyvm "$VMNAME" --natpf1 COCKPIT,tcp,127.0.0.1,9090,10.0.2.15,9090
-	
 	# hdd image + cloud-init.iso
 	VBoxManage storagectl "$VMNAME" --name "SATA Controller" --add sata --controller IntelAhci
 	VBoxManage clonehd disk "$IMG" "$VMDIR/vmdisk.vdi" --format VDI
@@ -148,13 +143,13 @@ EOF
 -----------------------------------------------------------------------------
 VM is configured and ready to start. To start the VM run
 
-   VBoxManage startvm "$VMNAME" [--type headless]
+   VBoxManage startvm "$VMNAME" --type headless
+
+(vbox tends to take 100% cpu if headless is not specified)
 
 Give it a minute to boot and then login with SSH
 
    ssh -p 2222 admin@localhost
-
-It also starts a cockpit Web UI on https://localhost:9090
 
 EOF
 }
