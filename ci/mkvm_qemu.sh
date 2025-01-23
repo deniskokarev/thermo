@@ -61,8 +61,10 @@ start_vm() {
 	if [ -f pid ]; then
 		die "$VMNAME is already running"
 	fi
+	# seems to crash often without pdpe1gb
 	qemu-system-x86_64  \
-		-cpu host -m 8192 \
+		-cpu host,pdpe1gb \
+		-m 8192 \
 		-smp 4 \
 		-accel hvf \
 		-nographic \
@@ -77,12 +79,17 @@ start_vm() {
 stop_vm() {
 	cd "$VMDIR"
 	if [ -f pid ]; then
-		echo "Shutting down $VMNAME..."
-		echo '{"execute": "qmp_capabilities"}{"execute": "system_powerdown"}' | nc -U qmp.sock
-		while [ -f pid ]; do
-			sleep 1
-		done
-		echo "$VMNAME stopped"
+		if ! kill -s 0 $(cat pid); then
+			echo "Hmm, QEMU process seems to be dead, cleaning up"
+			rm -f pid qmp.sock
+		else
+			echo "Shutting down $VMNAME..."
+			echo '{"execute": "qmp_capabilities"}{"execute": "system_powerdown"}' | nc -U qmp.sock
+			while [ -f pid ]; do
+				sleep 1
+			done
+			echo "$VMNAME stopped"
+		fi
 	else
 		echo "$VMNAME is not running"
 	fi
@@ -150,17 +157,22 @@ VM is configured and ready to start. To start the VM do
 
    $0 "$VMNAME"
 
-Give it a minute to boot and then login from another window with SSH
+Give it a minute to boot and then login from another window with SSH using id_rsa key
 
    ssh -p 2222 admin@localhost
+
+Password-based access is not allowed.
 EOF
 }
 
 delete_vm() {
+	if [ ! -d "$VMDIR" ]; then
+		die "$VMNAME doesn't exist"
+	fi
     read -p "Do you wish to delete VM $VMNAME? " yn
     case $yn in
-        [Yy]* ) break;;
-        * ) exit 0;;
+        [Yy]* ) true ;;
+        * ) exit 0 ;;
     esac
 	sed -i -e '/^\[localhost\]:2222/d' ~/.ssh/known_hosts
 	stop_vm
