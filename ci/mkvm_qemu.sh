@@ -63,9 +63,9 @@ start_vm() {
 	fi
 	qemu-system-x86_64  \
 		-cpu host -m 8192 \
+		-smp 4 \
 		-accel hvf \
 		-nographic \
-		-snapshot \
 		-netdev id=net0,type=user,hostfwd=tcp:127.0.0.1:2222-:22 \
 		-device virtio-net-pci,netdev=net0 \
 		-drive if=virtio,format=qcow2,file=disk.qcow2 \
@@ -129,7 +129,7 @@ users:
   sudo: ALL=(ALL) NOPASSWD:ALL
   groups: users
   primary_group: adm
-  lock_passwd: false
+  lock_passwd: true
   ssh_authorized_keys:
   - $(cat $KEY_FILE)
 power_state:
@@ -143,7 +143,7 @@ EOF
 	qemu-img resize disk.qcow2 20G
 
 	# pass the cloud config and wait until VM shuts down
-	start_vm -cdrom cloud-config.iso
+	start_vm "-cdrom cloud-config.iso"
 	cat <<EOF
 -----------------------------------------------------------------------------
 VM is configured and ready to start. To start the VM do
