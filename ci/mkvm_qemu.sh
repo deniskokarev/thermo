@@ -1,11 +1,12 @@
 #!/bin/bash
 #
-# Make a "worker" VM using VirtualBox to executed CI locally
+# Make a "worker" VM using QEMU on Mac to execute CI locally
 #
-# Download Cloud CentOS 9 image and provision "admin" user
-# authenticated using current ~/.ssh/id_rsa.pub
+# It downloads Cloud CentOS 9 image, creates VM and provisions "admin"
+# user authenticated using current ~/.ssh/id_rsa.pub
+# No password access given
 #
-# See usage()
+# For more see usage()
 #
 set -o errexit
 
@@ -17,17 +18,24 @@ IMG_URL=https://cloud.centos.org/centos/9-stream/x86_64/images/CentOS-Stream-Gen
 
 IMG=~/Downloads/${IMG_URL##*/} 
 
+die() {
+	echo $@ >&2
+	exit 1
+}
+
 usage() {
 	cat <<EOF
-This script creates or deletes CentOS Virtual Box VM
+This script starts, stops, creates or deletes CentOS VM
 Usage:
-$0 [-d] [<name>]
+$0 [-t|-c|-d] [<name>]
 
+-c - create VM
+-t - terminate VM
 -d - delete the VM
 
-EOF
+by default start VM
 
-	check_qemu
+EOF
 }
 
 check_qemu() {
@@ -48,14 +56,36 @@ EOF
 	fi
 }
 
-delete_vm() {
-	check_qemu
-	sed -i -e '/^\[localhost\]:2222/d' ~/.ssh/known_hosts
-	# disregard other errors
-	set +o errexit
-	# TODO stop VM
-	rm -rf "$VMDIR"
-	echo "Deleted $VMNAME"
+start_vm() {
+	cd "$VMDIR"
+	if [ -f pid ]; then
+		die "$VMNAME is already running"
+	fi
+	qemu-system-x86_64  \
+		-cpu host -m 8192 \
+		-accel hvf \
+		-nographic \
+		-snapshot \
+		-netdev id=net0,type=user,hostfwd=tcp:127.0.0.1:2222-:22 \
+		-device virtio-net-pci,netdev=net0 \
+		-drive if=virtio,format=qcow2,file=disk.qcow2 \
+		-pidfile pid \
+		-qmp unix:qmp.sock,server,nowait \
+		$@
+}
+
+stop_vm() {
+	cd "$VMDIR"
+	if [ -f pid ]; then
+		echo "Shutting down $VMNAME..."
+		echo '{"execute": "qmp_capabilities"}{"execute": "system_powerdown"}' | nc -U qmp.sock
+		while [ -f pid ]; do
+			sleep 1
+		done
+		echo "$VMNAME stopped"
+	else
+		echo "$VMNAME is not running"
+	fi
 }
 
 download_image() {
@@ -67,29 +97,15 @@ download_image() {
 	fi
 }
 
-start_vm() {
-	cd "$VMDIR"
-	qemu-system-x86_64  \
-		-cpu host -m 8192 \
-		-accel hvf \
-		-nographic \
-		-snapshot \
-		-netdev id=net00,type=user,hostfwd=tcp::2222-:22 \
-		-device virtio-net-pci,netdev=net00 \
-		-drive if=virtio,format=qcow2,file=disk.qcow2 \
-		$@
-}
-
-stop_vm() {
-	cd "$VMDIR"
-	echo "Stop Not implemented"
-}
-
 create_vm() {	
+	if [ -d "$VMDIR" ]; then
+		die "VM directory $VMDIR already exists"
+	fi
+	
 	download_image
 
 	if [ ! -f $KEY_FILE ]; then
-		echo "You must create an ssh key pair to be able to login to VM"
+		echo "Creating ssh key pair to be able to login to VM"
 		ssh-keygen
 	fi
 
@@ -121,21 +137,36 @@ power_state:
 EOF
 	hdiutil makehybrid -o cloud-config.iso -ov -hfs -joliet -iso -default-volume-name cidata cloud-config/
 
-	#
-	# create the VM
-	#
-	
-	cp -f "$IMG" disk.qcow2
+	# create and resize VM disk
+   	cp -f "$IMG" disk.qcow2
 	chmod +w disk.qcow2
 	qemu-img resize disk.qcow2 20G
 
-	exec run_vm -cdrom cloud-config.iso &
-	pid=$!
-	wait $pid
-	# TODO better message
-	echo "vm created"
+	# pass the cloud config and wait until VM shuts down
+	start_vm -cdrom cloud-config.iso
+	cat <<EOF
+-----------------------------------------------------------------------------
+VM is configured and ready to start. To start the VM do
+
+   $0 "$VMNAME"
+
+Give it a minute to boot and then login from another window with SSH
+
+   ssh -p 2222 admin@localhost
+EOF
 }
 
+delete_vm() {
+    read -p "Do you wish to delete VM $VMNAME? " yn
+    case $yn in
+        [Yy]* ) break;;
+        * ) exit 0;;
+    esac
+	sed -i -e '/^\[localhost\]:2222/d' ~/.ssh/known_hosts
+	stop_vm
+	rm -rf "$VMDIR"
+	echo "Deleted $VMNAME"
+}
 
 #
 # Main
@@ -145,7 +176,7 @@ check_qemu
 
 act="start_vm"
 
-while getopts "hd" arg; do
+while getopts "htcd" arg; do
 	case $arg in
 		h)
 			usage
@@ -165,8 +196,7 @@ done
 
 shift $((OPTIND-1))
 
-VMNAME=${1:-"worker"}
-VMDIR=$BASEFOLDER/$VMNAME
+VMNAME="${1:-worker}"
+VMDIR="$BASEFOLDER/$VMNAME"
 
 $act
-
