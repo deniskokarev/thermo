@@ -6,7 +6,9 @@
 
 LOG_MODULE_REGISTER(adc, LOG_LEVEL_INF);
 
-#include "adc.h"
+#include "adc.hpp"
+
+namespace dkv::thermo {
 
 #if !DT_NODE_EXISTS(DT_PATH(zephyr_user)) || \
     !DT_NODE_HAS_PROP(DT_PATH(zephyr_user), io_channels)
@@ -36,29 +38,22 @@ static struct adc_sequence sequence[ADC_NCHAN] = {
 		DT_FOREACH_PROP_ELEM(DT_PATH(zephyr_user), io_channels, DT_BUF_DEF)
 };
 
-/**
- * @return 0 on success, otherwise error code
- */
-int adc_init() {
+void adc_init() {
 	/* Configure channels individually prior to sampling. */
 	for (size_t i = 0U; i < ARRAY_SIZE(adc_channels); i++) {
 		if (!device_is_ready(adc_channels[i].dev)) {
-			LOG_ERR("ADC controller device not ready");
-			return -EINVAL;
+			throw AdcError(-EINVAL, "ADC controller device not ready");
 		}
 
 		int rc = adc_channel_setup_dt(&adc_channels[i]);
 		if (rc < 0) {
-			LOG_ERR("Could not setup channel #%d (%d)", i, rc);
-			return -EINVAL;
+			throw AdcError(rc, "Could not setup channel #%d (%d)", i, rc);
 		}
 		rc = adc_sequence_init_dt(&adc_channels[i], &sequence[i]);
 		if (rc < 0) {
-			LOG_ERR("Could not setup channel #%d sequence (%d)", i, rc);
-			return -EINVAL;
+			throw AdcError(rc, "Could not setup channel #%d sequence (%d)", i, rc);
 		}
 	}
-	return 0;
 }
 
 // nordic iref = 0.6v, and with x6 scale factor 4095 == 3.6v
@@ -66,22 +61,15 @@ static float adc2v(float adc) {
 	return adc * 3.6f / 4096;
 }
 
-/**
- * read adc value from the given channel
- * @param sample the resulting value in volts
- * @param chan ACH_ channel number
- * @return 0 on success, otherwise err code
- */
-int adc_sample(float *sample, int chan) {
-	int err = adc_read(adc_channels[chan].dev, &sequence[chan]);
-	if (err < 0) {
-		LOG_ERR("- %s, channel %d: error: %d ",
-		        adc_channels[chan].dev->name,
-		        adc_channels[chan].channel_id,
-		        err);
-		return err;
+float adc_sample(int chan) {
+	int rc = adc_read(adc_channels[chan].dev, &sequence[chan]);
+	if (rc < 0) {
+		throw AdcError(rc, "ADC: %s, channel %d",
+		               adc_channels[chan].dev->name,
+		               adc_channels[chan].channel_id);
 	} else {
-		*sample = adc2v(buf[chan]);
-		return 0;
+		return adc2v(buf[chan]);
 	}
 }
+
+} // namespace dkv::thermo

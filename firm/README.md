@@ -96,3 +96,39 @@ picocom -b 115200 /dev/cu.usbmodem0010503670791
 ```
 
 exit with ^A^X
+
+# C++ Exceptions
+
+It seems that C++ exceptions just work out of the box. The flash and ram overhead is very minor:
+before
+```
+           FLASH:      138760 B       512 KB     26.47%
+             RAM:       37648 B        64 KB     57.45%
+```
+after:
+```
+           FLASH:      151360 B       512 KB     28.87%
+             RAM:       39088 B        64 KB     59.64%
+```
+
+Unhandled exceptions lead to `abort()`, like so:
+
+```
+...
+abort()
+[00:00:00.277,099] <err> os: r0/a1:  0x00000004  r1/a2:  0x00000000  r2/a3:  0x0000000c
+[00:00:00.277,130] <err> os: r3/a4:  0x00000004 r12/ip:  0x20009fe8 r14/lr:  0x0000b821
+[00:00:00.277,130] <err> os:  xpsr:  0x210b0000
+[00:00:00.277,130] <err> os: Faulting instruction address (r15/pc): 0x0000b830
+[00:00:00.277,160] <err> os: >>> ZEPHYR FATAL ERROR 4: Kernel panic on CPU 0
+[00:00:00.277,221] <err> os: Current thread: 0x200033a0 (main)
+[00:00:01.727,081] <err> os: Halting system
+```
+
+alas, addr2line doesn't show the stack trace
+
+```
+% $addr2line -e build/zephyr/zephyr.elf 0x0000b830 0x0000b821
+/Users/dkv/zephyrproject/zephyr/lib/libc/common/source/stdlib/abort.c:14
+/Users/dkv/zephyrproject/modules/hal/cmsis/CMSIS/Core/Include/cmsis_gcc.h:1315
+```

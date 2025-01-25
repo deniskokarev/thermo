@@ -7,7 +7,9 @@
 LOG_MODULE_REGISTER(thermo, LOG_LEVEL_INF);
 
 #include <zephyr/drivers/sensor.h>
-#include "thermo.h"
+#include "thermo.hpp"
+
+namespace dkv::thermo {
 
 static const enum sensor_channel s_vals[THS_SZ] = {
 		[THS_TEMP] = SENSOR_CHAN_AMBIENT_TEMP,
@@ -24,26 +26,17 @@ static const enum sensor_channel s_vals[THS_SZ] = {
 
 static const struct device *const thermo_dev = DEVICE_DT_GET(THERMO_DEV_NODE);
 
-/**
- * init temperature sensor
- * @return true on success
- */
-bool thermo_init() {
+void thermo_init() {
 	int rc = device_is_ready(thermo_dev);
 	if (!rc) {
-		LOG_ERR("Device \"%s\" not ready", thermo_dev->name);
+		throw ThermoError(rc, "Device \"%s\" not ready", thermo_dev->name);
 	} else {
 		LOG_INF("Initialized sensor \"%s\"", thermo_dev->name);
 	}
-	return rc;
 }
 
-/**
- * read temperature/humidity sample
- * @param sample - pointer to S_SZ double elements
- * @return 0 on success
- */
-int thermo_read(double sample[THS_SZ]) {
+const ThermoSample thermo_read() {
+	ThermoSample result;
 	int rc = sensor_sample_fetch(thermo_dev);
 	if (rc) {
 		LOG_ERR("Failed to fetch sensor sample (%d)", rc);
@@ -52,10 +45,11 @@ int thermo_read(double sample[THS_SZ]) {
 		struct sensor_value val;
 		rc = sensor_channel_get(thermo_dev, s_vals[sv], &val);
 		if (rc) {
-			LOG_ERR("Failed to get data (%d) data for sensor, err = %d", s_vals[sv], rc);
-			return rc;
+			throw ThermoError(rc, "Failed to get data (%d) data for sensor, err = %d", s_vals[sv], rc);
 		}
-		sample[sv] = sensor_value_to_double(&val);
+		result[sv] = sensor_value_to_double(&val);
 	}
-	return 0;
+	return result;
 }
+
+} // namespace dkv:thermo

@@ -14,7 +14,10 @@ LOG_MODULE_REGISTER(bt, LOG_LEVEL_INF);
 #include <zephyr/bluetooth/gatt.h>
 #include <zephyr/sys/byteorder.h>
 
-#include "thermo.h"
+#include "thermo.hpp"
+#include "bt.hpp"
+
+namespace dkv::thermo {
 
 static const struct bt_data ad[] = {
 		BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
@@ -58,15 +61,11 @@ static int settings_runtime_load(void) {
 	return 0;
 }
 
-/**
- * start BT subsystem
- * @return 0 on success, otherwise err code
- */
-int bt_start() {
+
+void bt_start() {
 	int err = bt_enable(NULL);
 	if (err) {
-		LOG_ERR("Bluetooth init failed (err %d)", err);
-		return err;
+		throw BtError{err, "Bluetooth init failed"};
 	}
 
 	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
@@ -75,9 +74,9 @@ int bt_start() {
 
 	err = settings_subsys_init();
 	if (err) {
-		LOG_ERR("settings subsys initialization: fail (err %d)", err);
+		throw BtError{err, "Settings subsys initialization failed"};
 	} else {
-		LOG_INF("settings subsys initialization: OK");
+		LOG_INF("Settings subsys initialization: OK");
 	}
 
 	settings_load();
@@ -90,12 +89,10 @@ int bt_start() {
 	                                      BT_GAP_ADV_SLOW_INT_MIN,
 	                                      BT_GAP_ADV_SLOW_INT_MAX, NULL), ad, ARRAY_SIZE(ad), NULL, 0);
 	if (err) {
-		LOG_ERR("Advertising failed to start (err %d)", err);
-		return err;
+		throw BtError{err, "Advertising failed to start"};
 	}
 
 	LOG_INF("Advertising successfully started");
-	return 0;
 }
 
 static struct esp_ctx_s {
@@ -106,14 +103,14 @@ static struct esp_ctx_s {
 } esp_ctx = {.temp_val = 20 * 100, .hum_val = 50 * 100, .notify_cnt = 0};
 
 static void update_temp() {
-	static double val[THS_SZ];
-	if (thermo_read(val)) {
-		LOG_ERR("Failed to fetch sensor sample");
-	} else {
+	try {
+		auto val = thermo_read();
 		LOG_INF("T:   %.1fC", val[THS_TEMP]);
 		LOG_INF("RH:  %.1f%%", val[THS_HUM]);
 		esp_ctx.temp_val = val[THS_TEMP] * 100;
 		esp_ctx.hum_val = val[THS_HUM] * 100;
+	} catch (const ThermoError &ex) {
+		LOG_ERR("Failed to fetch sensor sample: %s, err: %d", ex.msg, ex.code);
 	}
 }
 
@@ -121,7 +118,7 @@ static ssize_t read_temp(struct bt_conn *conn, const struct bt_gatt_attr *attr,
                          void *buf, uint16_t len, uint16_t offset) {
 	update_temp();
 
-	const uint16_t *u16 = attr->user_data;
+	const uint16_t *u16 = static_cast<uint16_t *>(attr->user_data);
 	uint16_t value = sys_cpu_to_le16(*u16);
 	return bt_gatt_attr_read(conn, attr, buf, len, offset, &value,
 	                         sizeof(value));
@@ -177,3 +174,5 @@ static void update_handler(struct k_work *work) {
 	bt_gatt_notify(NULL, &ess_svc.attrs[6], &v, sizeof(v));
 	k_work_reschedule(dwork, UPDATE_T); // re-trigger next invocation
 }
+
+} // namespace dkv::thermo

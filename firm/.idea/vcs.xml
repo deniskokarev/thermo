@@ -14,6 +14,7 @@
     <mapping directory="$USER_HOME$/zephyrproject/modules/hal/atmel" vcs="Git" />
     <mapping directory="$USER_HOME$/zephyrproject/modules/hal/cmsis" vcs="Git" />
     <mapping directory="$USER_HOME$/zephyrproject/modules/hal/espressif" vcs="Git" />
+    <mapping directory="$USER_HOME$/zephyrproject/modules/hal/intel" vcs="Git" />
     <mapping directory="$USER_HOME$/zephyrproject/modules/hal/libmetal" vcs="Git" />
     <mapping directory="$USER_HOME$/zephyrproject/modules/hal/microchip" vcs="Git" />
     <mapping directory="$USER_HOME$/zephyrproject/modules/hal/nordic" vcs="Git" />

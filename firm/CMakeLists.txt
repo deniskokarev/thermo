@@ -12,4 +12,4 @@ set(BOARD nrf52832_therm)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(thermo)
 
-target_sources(app PRIVATE src/main.c src/thermo.c src/adc.c src/bt.c)
+target_sources(app PRIVATE src/main.cpp src/thermo.cpp src/adc.cpp src/bt.cpp src/db.cpp)
