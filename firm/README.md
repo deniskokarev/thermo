@@ -132,3 +132,13 @@ alas, addr2line doesn't show the stack trace
 /Users/dkv/zephyrproject/zephyr/lib/libc/common/source/stdlib/abort.c:14
 /Users/dkv/zephyrproject/modules/hal/cmsis/CMSIS/Core/Include/cmsis_gcc.h:1315
 ```
+
+## Unit Test
+Check [tests/README.md](tests/README.md)
+
+To run tests quickly:
+```
+$ZEPHYR_BASE/scripts/twister -O /tmp/zt --platform qemu_x86 -T test
+...
+INFO    - Total complete:    1/   1  100%  skipped:    0, failed:    0, error:    0
+```
